@@ -94,3 +94,38 @@ const createDepartment = () => {
     });
 };
 
+const createEmployeeRole = () => {
+    let query = 'VIEW employee_manager_db AS SELECT name FROM department'
+    connection.query(query)
+
+    inquirer
+    .prompt([
+        {
+            name: 'title',
+            type: 'input',
+            message: "What is the role name?",
+        },
+        {
+            name: 'salary',
+            type: 'input',
+            message: 'What is this roles salary'
+        },
+        {
+            name: 'department'
+        }
+    ]);
+}
+
+const viewDepartments = () => {
+    connection.query('SHOW TABLES FROM employee_manager_db')
+    
+}
+
+const viewEmployee = () => {
+
+}
+
+const viewRoles = () => {
+
+}
+
