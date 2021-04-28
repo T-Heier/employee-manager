@@ -1,8 +1,7 @@
-const mysqul = require('mysql');
+const mysql = require('mysql');
 const inquirer = require('inquirer');
-const { runInContext } = require('node:vm');
 
-const connetion = mysql.createConnection({
+const connection = mysql.createConnection({
     host: 'localhost',
 
     // Your port; if not 3306
@@ -35,6 +34,7 @@ const startCreation = () => {
                 'Create employee role',
                 'Create employee',
                 'Update employee role',
+                'Exit',
             ],
         })
         // switch statement to pick which function you would like to run from the inquirer prompt
@@ -60,6 +60,9 @@ const startCreation = () => {
                     break;
                 case 'Update employee role':
                     updateRole();
+                case 'Exit':
+                    connection.end();
+                    break;
                 default:
                     console.log(`Invalid action: ${answer.action}`);
                     break;
@@ -76,12 +79,15 @@ const createDepartment = () => {
         message: 'What is the department you are wanting to create',
     })
     .then((answer) => {
-        connection.query({
+        connection.query(
+            
+            'INSERT INTO department SET ?',
+            {
             name: answer.department
         },
         (err) => {
             if (err) throw err;
-            console.log(`You have successfully created ${answer.name} department`);
+            console.log(`You have successfully created a department`);
             startCreation();
             }
         );
