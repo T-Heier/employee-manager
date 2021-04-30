@@ -12,7 +12,7 @@ const connection = mysql.createConnection({
   
     // Your password
     password: 'root',
-    database: 'employee_manager_db',
+    database: 'employee_manager_DB',
 });
 
 connection.connect((err) => {
@@ -95,11 +95,11 @@ const createDepartment = () => {
 };
 
 const createEmployeeRole = () => {
-    let query = 'VIEW employee_manager_db AS SELECT name FROM department'
-    connection.query(query)
+    connection.query('SELECT * FROM department', function (err, res) {
+        if (err) throw err
 
-    inquirer
-    .prompt([
+        inquirer
+        .prompt([
         {
             name: 'title',
             type: 'input',
@@ -111,21 +111,69 @@ const createEmployeeRole = () => {
             message: 'What is this roles salary'
         },
         {
-            name: 'department'
+            name: 'department',
+            type: 'list',
+            message: "Which department should your new role belong to",
+            choices: function() {
+                let array = [];
+                for (let i = 0; i < res.length; i++) {
+                array.push(res[i].name);
+                }
+                return array;
+            },
         }
-    ]);
-}
+    ]).then(function (answer) {
+        let department_id;
+        for (let a = 0; a < res.length; a++) {
+            if (res[a].name == answer.Department) {
+                department_id = res[a].id;
+            }
+        }
+
+        connection.query(
+            'INSERT INTO role SET ?',
+            {
+                title: answer.title,
+                salary: answer.salary,
+                department_id: department
+            },
+            function (err, res) {
+                if(err)throw err;
+                console.table(res);
+                options();
+            })
+    })
+})
+};
+
 
 const viewDepartments = () => {
-    connection.query('SHOW TABLES FROM employee_manager_db')
-    
+    var query = 'SELECT * FROM department';
+    connection.query(query, function(err, res) {
+        if(err)throw err;
+        console.log('Departments')
+        console.table(res)
+        startCreation();
+    });
 }
 
 const viewEmployee = () => {
-
+    var query = 'SELECT * FROM employee';
+    connection.query(query, function(err, res) {
+        if(err)throw err;
+        console.log("Employees")
+        console.table(res);
+        startCreation();
+    });
 }
 
 const viewRoles = () => {
-
+    var query = 'SELECT * FROM role';
+    connection.query(query, function(err, res) {
+        if(err)throw err;
+        console.log("Roles")
+        console.table(res);
+        startCreation();
+    });
 }
 
