@@ -95,6 +95,19 @@ const createDepartment = () => {
 };
 
 const createEmployeeRole = () => {
+
+
+    let departmentsArray = []
+    const departmentChoices = () => {
+        connection.query("SELECT * FROM department", function (err, res) {
+        if (err) throw err;
+        for (let i = 0; i < res.length; i++) 
+        departmentsArray.push(res[i].name);
+        })
+        return departmentsArray;
+    }   
+    
+
     connection.query('SELECT * FROM department', function (err, res) {
         if (err) throw err
 
@@ -114,33 +127,23 @@ const createEmployeeRole = () => {
             name: 'department',
             type: 'list',
             message: "Which department should your new role belong to",
-            choices: function() {
-                let array = [];
-                for (let i = 0; i < res.length; i++) {
-                array.push(res[i].name);
-                }
-                return array;
-            },
+            choices: departmentChoices(),
         }
+        
     ]).then(function (answer) {
-        let department_id;
-        for (let a = 0; a < res.length; a++) {
-            if (res[a].name == answer.Department) {
-                department_id = res[a].id;
-            }
-        }
+        let department_id = departmentChoices().indexOf(answer.department) + 1;
+        let role = { 
+            title: answer.title,
+            salary: answer.salary,
+            department_id: department_id,            
+        };
 
         connection.query(
-            'INSERT INTO role SET ?',
-            {
-                title: answer.title,
-                salary: answer.salary,
-                department_id: department
-            },
+            'INSERT INTO role SET ?', role,
             function (err, res) {
                 if(err)throw err;
                 console.table(res);
-                options();
+                viewRoles();
             })
     })
 })
