@@ -149,6 +149,61 @@ const createEmployeeRole = () => {
 })
 };
 
+const createEmployee = () => {
+
+
+    let rolesArray = []
+    const roleChoice = () => {
+        connection.query("SELECT * FROM role", function (err, res) {
+        if (err) throw err;
+        for (let i = 0; i < res.length; i++) 
+        rolesArray.push(res[i].name);
+        })
+        return rolesArray;
+    }   
+    
+
+    connection.query('SELECT * FROM employee', function (err, res) {
+        if (err) throw err
+
+        inquirer
+        .prompt([
+        {
+            name: 'name',
+            type: 'input',
+            message: "What is the employee's name?",
+        },
+        {
+            name: 'lastName',
+            type: 'input',
+            message: `What is the employee's last name`
+        },
+        {
+            name: 'role',
+            type: 'list',
+            message: "What role does your employee have",
+            choices: roleChoice(),
+        }
+        
+    ]).then(function (answer) {
+        let role_id = roleChoice().indexOf(answer.role) + 1;
+        let employee = { 
+            title: answer.name,
+            salary: answer.lastName,
+            role: role_id,            
+        };
+
+        connection.query(
+            'INSERT INTO employee SET ?', employee,
+            function (err, res) {
+                if(err)throw err;
+                console.table(res);
+                viewEmployee();
+            })
+    })
+})
+};
+
 
 const viewDepartments = () => {
     var query = 'SELECT * FROM department';
