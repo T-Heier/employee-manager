@@ -95,8 +95,6 @@ const createDepartment = () => {
 };
 
 const createEmployeeRole = () => {
-
-
     let departmentsArray = []
     const departmentChoices = () => {
         connection.query("SELECT * FROM department", function (err, res) {
@@ -150,6 +148,15 @@ const createEmployeeRole = () => {
 };
 
 const createEmployee = () => {
+    let managerArray = []
+    const getManager = () => {
+        connection.query("SELECT * FROM employee", function (err, res) {
+            if (err) throw err
+            for (j = 0; j < res.length; j++)
+            managerArray.push(res[j].id)
+        });
+        return managerArray;
+    }
 
 
     let rolesArray = []
@@ -157,7 +164,7 @@ const createEmployee = () => {
         connection.query("SELECT * FROM role", function (err, res) {
         if (err) throw err;
         for (let i = 0; i < res.length; i++) 
-        rolesArray.push(res[i].name);
+        rolesArray.push(res[i].title);
         })
         return rolesArray;
     }   
@@ -183,14 +190,21 @@ const createEmployee = () => {
             type: 'list',
             message: "What role does your employee have",
             choices: roleChoice(),
+        },
+        {
+            name: "manager",
+            type: "list",
+            message: "Who is the manager of this employee?",
+            choices: getManager(),
         }
         
     ]).then(function (answer) {
         let role_id = roleChoice().indexOf(answer.role) + 1;
         let employee = { 
-            title: answer.name,
-            salary: answer.lastName,
-            role: role_id,            
+            first_name: answer.name,
+            last_name: answer.lastName,
+            role_id: role_id,
+            manager_id: answer.manager,
         };
 
         connection.query(
