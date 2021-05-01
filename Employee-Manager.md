@@ -35,6 +35,14 @@
 
   Pull the repo, install the npm packages and run with node.js
 
+  Some example pictures.
+  ![Start](/assets/employee-manger1.PNG)
+  ![CreateDepartment](/assets/employee-manager2.PNG)
+  ![CreateRole](/assets/employee-manager3.PNG)
+  ![CreateEmployee](/assets/employee-manager4.PNG)
+  ![](/assets/employee-manager5.PNG)
+  ![](/assets/employee-manager6.PNG)
+
   # Contact me!
 
   - T-Heier
